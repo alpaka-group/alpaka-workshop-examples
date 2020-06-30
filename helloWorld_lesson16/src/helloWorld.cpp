@@ -66,7 +66,7 @@ int main() {
 
     // Select the first device available on a system, for the chosen accelerator
     auto const device = pltf::getDevByIdx<Acc>(0u);
-  
+
     // Define type for a queue with requested properties:
     // in this example we require the queue to be blocking the host side
     // while operations on the device (kernels, memory transfers) are running
