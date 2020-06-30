@@ -95,7 +95,8 @@ int main() {
 
     // Wait until all operations in the queue are finished.
     // This call is redundant for a blocking queue
-    wait::wait(queue);
+    // Here use alpaka:: because of an issue on macOS
+    alpaka::wait::wait(queue);
 
     return 0;
 }
