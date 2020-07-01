@@ -28,6 +28,12 @@ project("alpakaWorkshopExamples")
 # Add subdirectories.
 ################################################################################
 
+add_subdirectory("computePi_lesson23/")
+add_subdirectory("computePi_lesson24/")
+add_subdirectory("computePi_lesson25/")
+add_subdirectory("computePi_lesson26/")
 add_subdirectory("helloWorld/")
 add_subdirectory("helloWorld_lesson13/")
 add_subdirectory("helloWorld_lesson16/")
+add_subdirectory("helloWorld_lesson21/")
+add_subdirectory("helloWorld_lesson22/")
