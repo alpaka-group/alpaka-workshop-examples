@@ -80,7 +80,7 @@ struct PixelFinderKernelOnePointPerThread {
 // This is a general version of the kernel that works for any work division.
 // It employs a widely used approach to workload distribution in alpaka (and CUDA) kernels
 // Note that this kernel does not employ the alpaka element layer yet
-struct PixelFinderKernelMuptiplePointsPerThread {
+struct PixelFinderKernelMultiplePointsPerThread {
     template<typename Acc>
     ALPAKA_FN_ACC void operator()(Acc const & acc, Points points, float r, uint32_t n) const
     {
@@ -95,11 +95,11 @@ struct PixelFinderKernelMuptiplePointsPerThread {
     }
 };
 
-// This is a general version of the PixelFinderKernelMuptiplePointsPerThread kernel,
+// This is a general version of the PixelFinderKernelMultiplePointsPerThread kernel,
 // which also employs alpaka element layer.
 // It employs striding and loop blocking, to allow efficient processing
 // on both CPUs and GPU with a proper choice of element extent
-struct PixelFinderKernelMuptiplePointsPerThreadElements {
+struct PixelFinderKernelMultiplePointsPerThreadElements {
     template<typename Acc>
     ALPAKA_FN_ACC void operator()(Acc const & acc, Points points, float r, uint32_t n) const
     {
