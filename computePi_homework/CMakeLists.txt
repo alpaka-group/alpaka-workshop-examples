@@ -1,5 +1,5 @@
 #
-# Copyright 2015-2020 Benjamin Worpitz, Jan Stephan
+# Copyright 2014-2020 Erik Zenker, Benjamin Worpitz, Jan Stephan
 #
 # This file exemplifies usage of Alpaka.
 #
@@ -18,23 +18,29 @@
 
 ################################################################################
 # Required CMake version.
-################################################################################
 
 cmake_minimum_required(VERSION 3.15)
 
-project("alpakaWorkshopExamples")
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ################################################################################
-# Add subdirectories.
-################################################################################
+# Project.
 
-add_subdirectory("computePi_homework/")
-add_subdirectory("computePi_lesson23/")
-add_subdirectory("computePi_lesson24/")
-add_subdirectory("computePi_lesson25/")
-add_subdirectory("computePi_lesson26/")
-add_subdirectory("helloWorld/")
-add_subdirectory("helloWorld_lesson13/")
-add_subdirectory("helloWorld_lesson16/")
-add_subdirectory("helloWorld_lesson21/")
-add_subdirectory("helloWorld_lesson22/")
+set(_TARGET_NAME computePi_homework)
+
+project(${_TARGET_NAME})
+
+#-------------------------------------------------------------------------------
+# Find alpaka.
+
+find_package(alpaka REQUIRED)
+
+#-------------------------------------------------------------------------------
+# Add executable.
+
+alpaka_add_executable(
+    ${_TARGET_NAME}
+    src/computePi.cpp)
+target_link_libraries(
+    ${_TARGET_NAME}
+    PUBLIC alpaka::alpaka)
