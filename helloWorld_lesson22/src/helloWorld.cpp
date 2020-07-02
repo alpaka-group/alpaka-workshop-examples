@@ -34,8 +34,20 @@ struct HelloWorldKernel {
         using namespace alpaka;
         // The acc parameter is used to access alpaka abstractions in kernels,
         // in this case thread indexing
-        uint32_t threadIdx = idx::getIdx<Grid, Threads>(acc)[0];
-        printf("Hello, World from alpaka thread %u!\n", threadIdx);
+
+        // The following changes to switch to 2D indexing are done in lesson 22
+
+        uint32_t gridThreadIdxY = idx::getIdx<Grid, Threads>(acc)[0];
+        uint32_t gridThreadIdxX = idx::getIdx<Grid, Threads>(acc)[1];
+        printf("Hello, World from alpaka thread (%u, %u)!\n", gridThreadIdxY, gridThreadIdxX);
+
+        // It is possible to get index type from the accelerator,
+        // but for simplicity we just repeat the type here
+        using Vec = vec::Vec<dim::DimInt<2>, uint32_t>;
+        Vec gridBlockIdx = idx::getIdx<Grid, Blocks>(acc);
+        Vec blockThreadIdx = idx::getIdx<Block, Threads>(acc);
+        printf("Hello, World from alpaka thread (%u, %u) in block (%u, %u)!\n",
+            blockThreadIdx[0], blockThreadIdx[1], gridBlockIdx[0], gridBlockIdx[1]);
     }
 };
 
@@ -44,7 +56,8 @@ int main() {
     using namespace alpaka;
 
     // Define dimensionality and type of indices to be used in kernels
-    using Dim = dim::DimInt<1>;
+    // Change to 2d indexing in lesson 22
+    using Dim = dim::DimInt<2>;
     using Idx = uint32_t;
 
     // Define alpaka accelerator type, which corresponds to the underlying programming model
@@ -70,9 +83,12 @@ int main() {
 
     // Define kernel execution configuration of blocks,
     // threads per block, and elements per thread
-    Idx blocksPerGrid = 8;
-    Idx threadsPerBlock = 1;
-    Idx elementsPerThread = 1;
+    // The kernel launch configuration is 2d in lesson 22
+    // Note that the constructor arguments have to be of type Idx,
+    // not matching types may cause template substitution errors
+    auto blocksPerGrid = vec::Vec<Dim, Idx>{2u, 4u};
+    auto threadsPerBlock = vec::Vec<Dim, Idx>{1u, 1u};
+    auto elementsPerThread = vec::Vec<Dim, Idx>{1u, 1u};
     using WorkDiv = workdiv::WorkDivMembers<Dim, Idx>;
     auto workDiv = WorkDiv{blocksPerGrid, threadsPerBlock, elementsPerThread};
 

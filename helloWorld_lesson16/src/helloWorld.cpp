@@ -66,7 +66,7 @@ int main() {
 
     // Select the first device available on a system, for the chosen accelerator
     auto const device = pltf::getDevByIdx<Acc>(0u);
-  
+
     // Define type for a queue with requested properties:
     // in this example we require the queue to be blocking the host side
     // while operations on the device (kernels, memory transfers) are running
@@ -95,7 +95,8 @@ int main() {
 
     // Wait until all operations in the queue are finished.
     // This call is redundant for a blocking queue
-    wait::wait(queue);
+    // Here use alpaka:: because of an issue on macOS
+    alpaka::wait::wait(queue);
 
     return 0;
 }

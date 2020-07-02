@@ -1,4 +1,5 @@
-/* Copyright 2019-2020 Benjamin Worpitz, Erik Zenker, Sergei Bastrakov
+/* Copyright 2019-2020 Benjamin Worpitz, Erik Zenker, Jan Stephan,
+ *                     Sergei Bastrakov
  *
  * This file exemplifies usage of Alpaka.
  *
@@ -19,23 +20,45 @@
 
 #include <cstdint>
 #include <iostream>
+#include <random>
+
+// Structure with memory buffers for inputs (x, y) and
+// outputs (inside) of the kernel
+struct Points {
+    float * x;
+    float * y;
+    bool * inside;
+};
 
 // Alpaka kernel defines operations to be executed concurrently on a device
 // It is a C++ functor: the entry point is operator()
-struct HelloWorldKernel {
+struct PixelFinderKernel {
     // Alpaka accelerator is the required first parameter for all kernels.
     // It is provided by alpaka automatically.
     // For portability its type is a template parameter.
     // ALPAKA_FN_ACC prefix is required for all functions that run on device.
     // Kernels are required to be const and return void
     template<typename Acc>
-    ALPAKA_FN_ACC void operator()(Acc const & acc) const {
+    ALPAKA_FN_ACC void operator()(Acc const & acc,
+        Points points, float r) const {
         // This function body will be executed by all threads concurrently
         using namespace alpaka;
-        // The acc parameter is used to access alpaka abstractions in kernels,
-        // in this case thread indexing
-        uint32_t threadIdx = idx::getIdx<Grid, Threads>(acc)[0];
-        printf("Hello, World from alpaka thread %u!\n", threadIdx);
+
+        // Thread index in the grid (among all threads)
+        uint32_t gridThreadIdx = idx::getIdx<Grid, Threads>(acc)[0];
+
+        // Read inputs for the current threads to work on
+        // For simplicity we assume the total number of threads
+        // is equal to the number of points
+        float x = points.x[gridThreadIdx];
+        float y = points.y[gridThreadIdx];
+
+        // Note acc parameter to sqrt, same for other math functions
+        float d = math::sqrt(acc, x * x + y * y);
+
+        // Compute and write output
+        bool isInside = (d <= r);
+        points.inside[gridThreadIdx] = isInside;
     }
 };
 
@@ -68,29 +91,30 @@ int main() {
     // Create a queue for the device
     auto queue = Queue{device};
 
-    // Define kernel execution configuration of blocks,
-    // threads per block, and elements per thread
-    Idx blocksPerGrid = 8;
-    Idx threadsPerBlock = 1;
-    Idx elementsPerThread = 1;
-    using WorkDiv = workdiv::WorkDivMembers<Dim, Idx>;
-    auto workDiv = WorkDiv{blocksPerGrid, threadsPerBlock, elementsPerThread};
+    // Memory allocation on host to be done here,
+    // will be added in lesson 25
 
-    // Instantiate the kernel object
-    HelloWorldKernel helloWorldKernel;
-    // Create a task to run the kernel with the given work division;
-    // creating a task does not put it for execution
-    auto taskRunKernel = kernel::createTaskKernel<Acc>(workDiv, helloWorldKernel);
+    // Initialization of point data on host to be done here,
+    // will be added in lesson 25
 
-    // Enqueue the kernel execution task.
-    // The kernel's operator() will be run concurrently
-    // on the device associated with the queue.
-    queue::enqueue(queue, taskRunKernel);
+    // Memory allocation on device to be done here,
+    // will be added in lesson 25
+
+    // Memory copy from host to device to be done here,
+    // will be added in lesson 25
+
+    // Kernel to be executed here, will be added in lesson 26
+
+    // Memory copy from device to host to be done here,
+    // will be added in lesson 25
 
     // Wait until all operations in the queue are finished.
     // This call is redundant for a blocking queue
     // Here use alpaka:: because of an issue on macOS
     alpaka::wait::wait(queue);
+
+    // Results to be integrated on host
+    // and printed here, will be added in lesson 26
 
     return 0;
 }

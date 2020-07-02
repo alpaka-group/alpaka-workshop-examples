@@ -34,8 +34,17 @@ struct HelloWorldKernel {
         using namespace alpaka;
         // The acc parameter is used to access alpaka abstractions in kernels,
         // in this case thread indexing
-        uint32_t threadIdx = idx::getIdx<Grid, Threads>(acc)[0];
-        printf("Hello, World from alpaka thread %u!\n", threadIdx);
+
+        // The following changes to index computation and output are done in lesson 21
+        uint32_t gridBlockIdx = idx::getIdx<Grid, Blocks>(acc)[0];
+        printf("Hello, World from alpaka block %u!\n", gridBlockIdx);
+
+        uint32_t blockThreadIdx = idx::getIdx<Block, Threads>(acc)[0];
+        printf("Hello, World from alpaka thread %u in block %u!\n", blockThreadIdx, gridBlockIdx);
+
+        uint32_t blockThreadExtent = workdiv::getWorkDiv<Block, Threads>(acc)[0];
+        uint32_t gridThreadIdx = gridBlockIdx * blockThreadExtent + blockThreadIdx;
+        printf("Hello, World from alpaka thread %u!\n", gridThreadIdx);
     }
 };
 
@@ -70,7 +79,7 @@ int main() {
 
     // Define kernel execution configuration of blocks,
     // threads per block, and elements per thread
-    Idx blocksPerGrid = 8;
+    Idx blocksPerGrid = 16; // increased from original 8 in lesson 13
     Idx threadsPerBlock = 1;
     Idx elementsPerThread = 1;
     using WorkDiv = workdiv::WorkDivMembers<Dim, Idx>;
