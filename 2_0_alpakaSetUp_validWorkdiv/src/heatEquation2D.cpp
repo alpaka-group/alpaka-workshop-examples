@@ -108,7 +108,11 @@ auto example(TAccTag const&) -> int
         stencilKernel,
         uCurrBufAcc.data(),
         uNextBufAcc.data(),
-        pitchCurrAcc);
+        pitchCurrAcc,
+        pitchNextAcc,
+        dx,
+        dy,
+        dt);
 
     // Simulate
     for(uint32_t step = 1; step <= numTimeSteps; ++step)
