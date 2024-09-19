@@ -17,7 +17,7 @@ set(_TARGET_NAME heatEquation2D)
 
 project(${_TARGET_NAME} LANGUAGES CXX)
 
-list(APPEND CMAKE_PREFIX_PATH "/project/project_465001310/local")
+list(APPEND CMAKE_PREFIX_PATH "/project/${PROJID}/${USER}/local")
 
 ################################################################################
 # PNGwriter
@@ -41,7 +41,7 @@ if(NOT TARGET alpaka::alpaka)
     if(alpaka_USE_SOURCE_TREE)
         # Don't build the examples recursively
         set(alpaka_BUILD_EXAMPLES OFF)
-        add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../.." "${CMAKE_BINARY_DIR}/alpaka")
+        add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../alpaka" "${CMAKE_BINARY_DIR}/alpaka")
     else()
         find_package(alpaka REQUIRED)
     endif()
